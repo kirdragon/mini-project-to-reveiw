@@ -13,7 +13,7 @@ class Database:
                             name TEXT,
                             author TEXT,
                             status BOOLEAN,
-                            year INREGER
+                            year INTREGER
                             )""")
         self.connection.commit()
         
@@ -29,7 +29,7 @@ class Database:
                             WHERE id = ?;
                             """,(index,))
         self.connection.commit()
-    
+
     def show_books(self):
         self.cursor.execute("""
                             SELECT * FROM books;
@@ -38,5 +38,21 @@ class Database:
         
         return(rows)
     
+    def change_status_to_read(self, index):
+        self.cursor.execute("""
+                            UPDATE books
+                            SET status = 1
+                            WHERE id = ?
+                            """,(index,))
+        self.connection.commit()
+        
+    def change_status_to_unread(self,index):
+        self.cursor.execute("""
+                            UPDATE books
+                            SET status = 0
+                            WHERE id = ?
+                            """,(index,))
+        self.connection.commit()
     def close(self):
         self.cursor.close()
+        self.connection.close()
