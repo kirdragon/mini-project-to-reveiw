@@ -12,15 +12,15 @@ class Database:
                             id INTEGER PRIMARY KEY,
                             name TEXT,
                             author TEXT,
-                            status BOOLEAN,
-                            year INTREGER
+                            year INTEGER,
+                            status BOOLEAN
                             )""")
         self.connection.commit()
         
     def add_book(self,book):
         self.cursor.execute("""
-                            INSERT INTO books(name,author,status, year)
-                            VALUES(?, ?, ?, ?)""",(book.name, book.author, book.status, book.year))
+                            INSERT INTO books(name,author, year, status)
+                            VALUES(?, ?, ?, ?)""",(book.name, book.author, book.year, book.status))
         self.connection.commit()
     
     def delete_book(self,index):
@@ -38,21 +38,20 @@ class Database:
         
         return(rows)
     
-    def change_status_to_read(self, index):
+    def change_status(self, choice, index):
+            self.cursor.execute("""
+                                UPDATE books
+                                SET status = ?
+                                WHERE id = ?
+                                """,(choice, index))
+            self.connection.commit()
+    
+    def get_id(self,ind):
         self.cursor.execute("""
-                            UPDATE books
-                            SET status = 1
+                            SELECT 1 FROM books
                             WHERE id = ?
-                            """,(index,))
-        self.connection.commit()
-        
-    def change_status_to_unread(self,index):
-        self.cursor.execute("""
-                            UPDATE books
-                            SET status = 0
-                            WHERE id = ?
-                            """,(index,))
-        self.connection.commit()
+                            """,(ind,))
+        return self.cursor.fetchone()
     def close(self):
         self.cursor.close()
         self.connection.close()
